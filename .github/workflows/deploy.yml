@@ -44,5 +44,5 @@ jobs:
             --env-file .env.production \
             --network baota_net \
             -p 52005:52005 \
-            ohayoshikin-demo
+            ohayoshikin-demo-img
         EOF
