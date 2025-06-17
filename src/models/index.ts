@@ -6,7 +6,7 @@ import { OrderModel } from './OrderModel';
 const models = {
   User: UserModel,
   UserToken: UserTokenModel,
-  Order: OrderModel, // 导出 OrderModel
+  Order: OrderModel,
 };
 
 export default models;

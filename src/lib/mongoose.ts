@@ -1,3 +1,4 @@
+// src/lib/mongoose.ts
 import models from '../models'
 import mongoose, { FilterQuery, Model, PopulateOptions } from 'mongoose'
 

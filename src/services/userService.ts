@@ -88,14 +88,13 @@ export class UserService {
    */
   async getUserByToken(token: string): Promise<UserSessionData | null> {
     const userToken = await UserTokenModel.findOne({ token })
-      .populate('userDetail')
-      .exec() as UserTokenDocument | null;
+        .exec() as UserTokenDocument | null;
 
-    if (!userToken || !userToken.userDetail || userToken.expireAt < new Date()) {
+    if (!userToken || userToken.expireAt < new Date()) {
       return null;
     }
 
-    const user: UserDocument = userToken.userDetail;
+    const user = await UserModel.findById(userToken.userId)
 
     return {
       id: user._id.toString(),
