@@ -193,6 +193,8 @@ export async function checkRechargeOrderAction(merchantSerial: string): Promise<
 
 // 注册 Server Action (不变)
 export async function registerAction(formData: FormData) {
+  console.log('regsiter action...:', formData)
+
   const username = formData.get('username') as string;
   const password = formData.get('password') as string;
 
@@ -203,7 +205,7 @@ export async function registerAction(formData: FormData) {
   }
 
   // 注册成功后为用户生成一些测试订单
-  await userService.seedUserOrders(result.user._id.toString());
+  // await userService.seedUserOrders(result.user._id.toString());
 
   const loginResult = await userService.login(username, password);
   if (loginResult.success) {
