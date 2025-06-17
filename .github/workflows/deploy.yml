@@ -27,11 +27,8 @@ jobs:
           'MONGO_URL=${{ secrets.MONGO_URL }}' \
           'MONGO_POOLMAX=${{ secrets.MONGO_POOLMAX }}' \
           'MONGO_POOLMIN=${{ secrets.MONGO_POOLMIN }}' \
-          'SMSMESSAGE_AES_ALGORITHM=${{ secrets.SMSMESSAGE_AES_ALGORITHM }}' \
-          'SMSMESSAGE_AES_IV=${{ secrets.SMSMESSAGE_AES_IV }}' \
-          'SMSMESSAGE_AES_KEY=${{ secrets.SMSMESSAGE_AES_KEY }}' \
-          'USER_PASSWORD_KEY=${{ secrets.USER_PASSWORD_KEY }}' \
-          'USER_TOKENSECRET=${{ secrets.USER_TOKENSECRET }}' \
+          'PAYMENT_SIGN_KEY=${{ secrets.PAYMENT_SIGN_KEY }}' \
+          'PAYMENT_API=${{ secrets.PAYMENT_API }}' \
           > ${{ secrets.SSH_TARGET_DIR }}/.env.production"
 
     - name: Build and Restart Docker container
