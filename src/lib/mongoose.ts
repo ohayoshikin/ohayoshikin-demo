@@ -1,7 +1,7 @@
 import models from '../models'
 import mongoose, { FilterQuery, Model, PopulateOptions } from 'mongoose'
 
-const MONGODB_URI = process.env['mongo.url']
+const MONGODB_URI = process.env['MONGO_URL']
 
 if (!MONGODB_URI) {
   throw new Error(

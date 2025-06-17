@@ -23,11 +23,11 @@ export async function callGatewayApi<T>(
   path: string,
   data: Record<string, any>
 ): Promise<{ code: number; msg: string; data?: T }> {
-  const GATEWAY_API_BASE_URL = process.env.GATEWAY_API_BASE_URL;
-  const SIGN_KEY = process.env.SIGN_KEY;
+  const PAYMENT_API = process.env.PAYMENT_API;
+  const PAYMENT_SIGN_KEY = process.env.PAYMENT_SIGN_KEY;
 
-  if (!GATEWAY_API_BASE_URL || !SIGN_KEY) {
-    throw new Error('Missing GATEWAY_API_BASE_URL or SIGN_KEY in environment variables.');
+  if (!PAYMENT_API || !PAYMENT_SIGN_KEY) {
+    throw new Error('Missing PAYMENT_API or PAYMENT_SIGN_KEY in environment variables.');
   }
 
   const commonParams = {
@@ -36,9 +36,9 @@ export async function callGatewayApi<T>(
   };
 
   const requestBody: any = { ...data, ...commonParams };
-  requestBody.sign = generateSign(requestBody, SIGN_KEY);
+  requestBody.sign = generateSign(requestBody, PAYMENT_SIGN_KEY);
 
-  const url = `${GATEWAY_API_BASE_URL}${path}`;
+  const url = `${PAYMENT_API}${path}`;
 
   try {
     const response = await fetch(url, {

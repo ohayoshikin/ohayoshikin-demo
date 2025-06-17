@@ -6,9 +6,9 @@ import { GatewayOrderState, RechargeCallbackData } from '@/src/types/user'
 
 export async function POST(request: Request) {
   try {
-    const SIGN_KEY = process.env.SIGN_KEY;
-    if (!SIGN_KEY) {
-      console.error('SIGN_KEY is not defined in environment variables.');
+    const PAYMENT_SIGN_KEY = process.env.PAYMENT_SIGN_KEY;
+    if (!PAYMENT_SIGN_KEY) {
+      console.error('PAYMENT_SIGN_KEY is not defined in environment variables.');
       return NextResponse.json({ code: 500, msg: '服务器配置错误' }, { status: 500 });
     }
 
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const paramsToSign: Record<string, any> = { ...callbackData };
     delete paramsToSign.sign; // 签名时不包含 sign 字段
 
-    const calculatedSign = generateSign(paramsToSign, SIGN_KEY);
+    const calculatedSign = generateSign(paramsToSign, PAYMENT_SIGN_KEY);
 
     if (calculatedSign !== sign) {
       console.warn(`Signature mismatch for merchantSerial: ${merchantSerial}. Received: ${sign}, Calculated: ${calculatedSign}`);
