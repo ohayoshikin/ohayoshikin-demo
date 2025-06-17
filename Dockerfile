@@ -34,6 +34,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+ENV PORT=52001
+
 # 复制运行所需文件
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
