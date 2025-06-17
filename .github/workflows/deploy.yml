@@ -35,9 +35,10 @@ jobs:
       run: |
         ssh -p ${{ secrets.SSH_REMOTE_PORT }} ${{ secrets.SSH_REMOTE_USER }}@${{ secrets.SSH_REMOTE_HOST }} << 'EOF'
           cd ${{ secrets.SSH_TARGET_DIR }}
-          docker build -t ohayoshikin-demo .
           docker stop ohayoshikin-demo || true
           docker rm ohayoshikin-demo || true
+          docker rm ohayoshikin-demo-img || true
+          docker build -t ohayoshikin-demo-img .
           docker run -d \
             --name ohayoshikin-demo \
             --env-file .env.production \
