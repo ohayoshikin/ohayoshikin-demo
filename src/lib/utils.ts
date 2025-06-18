@@ -25,13 +25,20 @@ export async function callGatewayApi<T>(
 ): Promise<{ code: number; msg: string; data?: T }> {
   const PAYMENT_API = process.env.PAYMENT_API;
   const PAYMENT_SIGN_KEY = process.env.PAYMENT_SIGN_KEY;
+  const PAYMENT_USERNAME = process.env.PAYMENT_USERNAME;
 
-  if (!PAYMENT_API || !PAYMENT_SIGN_KEY) {
+  if (
+    !PAYMENT_API
+    ||
+    !PAYMENT_SIGN_KEY
+    ||
+    !PAYMENT_USERNAME
+  ) {
     throw new Error('Missing PAYMENT_API or PAYMENT_SIGN_KEY in environment variables.');
   }
 
   const commonParams = {
-    username: 'merchant1',
+    username: PAYMENT_USERNAME,
     timestamp: getTimestamp(),
   };
 

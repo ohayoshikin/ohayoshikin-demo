@@ -36,6 +36,13 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=52005
+ENV TZ=Indian/Antananarivo
+
+# 设置时区为 Indian/Antananarivo
+RUN apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Indian/Antananarivo /etc/localtime \
+    && echo "Indian/Antananarivo" > /etc/timezone \
+    && apk del tzdata
 
 # 复制运行所需文件
 COPY --from=builder /app/public ./public

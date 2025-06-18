@@ -73,7 +73,10 @@ export async function getUserOrdersAction(page: PageParams): Promise<PageResult<
 }
 
 // 充值 Server Action (供 src/app/api/recharge/create-order/route.ts 调用)
-export async function rechargeAction(amount: number): Promise<{ success: boolean; url?: string; merchantSerial?: string; error?: string }> {
+export async function rechargeAction(
+  amount: number,
+  channelCode: string,
+): Promise<{ success: boolean; url?: string; merchantSerial?: string; error?: string }> {
   const userSession = await getCurrentUserAction();
   if (!userSession) {
     return { success: false, error: '用户未登录或会话已过期' };
@@ -92,7 +95,7 @@ export async function rechargeAction(amount: number): Promise<{ success: boolean
   const createOurOrderResult = await userService.createOrder(
     userSession.id,
     amount,
-    'Mvola-100-5000', // 固定渠道码
+    channelCode,
     notifyUrl
   );
 
@@ -106,7 +109,7 @@ export async function rechargeAction(amount: number): Promise<{ success: boolean
     // 2. 调用对方充值接口将充值数据提交到对方系统中
     const gatewayResponse = await callGatewayApi<CreateOrderResponseData>('/deposit/create', {
       amount,
-      channelCode: 'Mvola-100-5000',
+      channelCode,
       merchantSerial: merchantSerial, // 传入我们自己的订单ID
       notifyUrl: notifyUrl,
     });

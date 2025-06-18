@@ -11,6 +11,9 @@ export default function RechargePage() {
   const [showModal, setShowModal] = useState<boolean>(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const PAYMENT_CHANNELS = process.env.NEXT_PUBLIC_PAYMENT_CHANNELS
+  const channels = (PAYMENT_CHANNELS || '').split(',')
+
   const handleBack = () => {
     router.back();
   };
@@ -40,16 +43,17 @@ export default function RechargePage() {
           <button
             onClick={handleBack}
             className="px-3 py-1 rounded-md transition-colors duration-200 text-black cursor-pointer"
-          >
-            ← 返回
-          </button>
+          >← 返回</button>
           <h1 className="text-2xl font-bold text-gray-800">充值</h1>
           <div></div> {/* 占位符，保持居中 */}
         </div>
 
         {/* 充值渠道信息 */}
         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p className="text-gray-700 text-sm">充值渠道: <span className="font-semibold text-gray-900">Mvola 100~5000</span></p>
+          <p className="text-gray-700 text-sm">
+            充值渠道: 
+            <span className="font-semibold text-gray-900">Mvola 100~5000</span>
+          </p>
           <p className="text-gray-600 text-xs mt-1">请输入100到5000之间的金额。</p>
         </div>
 
@@ -64,6 +68,22 @@ export default function RechargePage() {
           onSubmit={handleSubmit} // 客户端处理提交事件
           className="space-y-6"
         >
+          <div>
+            <label htmlFor="amount" className="block text-gray-700 text-sm font-bold mb-2">
+              充值通道
+            </label>
+            {/* <div>{channels}</div> */}
+            <select
+              name="channelCode"
+              className="shadow border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-blue-500"
+
+            >
+              {
+                channels.map(c => (<option value={c}>{c}</option>))
+              }
+            </select>
+          </div>
+
           <div>
             <label htmlFor="amount" className="block text-gray-700 text-sm font-bold mb-2">
               充值金额 (￥)
