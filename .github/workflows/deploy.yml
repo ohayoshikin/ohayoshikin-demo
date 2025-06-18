@@ -29,6 +29,7 @@ jobs:
           'MONGO_POOLMIN=${{ secrets.MONGO_POOLMIN }}' \
           'PAYMENT_SIGN_KEY=${{ secrets.PAYMENT_SIGN_KEY }}' \
           'PAYMENT_API=${{ secrets.PAYMENT_API }}' \
+          'PAYMENT_USERNAME=${{ secrets.PAYMENT_USERNAME }}' \
           'NEXT_PUBLIC_PAYMENT_CHANNELS=${{ secrets.NEXT_PUBLIC_PAYMENT_CHANNELS }}' \
           > ${{ secrets.SSH_TARGET_DIR }}/.env.production"
 
