@@ -49,13 +49,13 @@ export default function RechargePage() {
         </div>
 
         {/* 充值渠道信息 */}
-        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+        {/* <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
           <p className="text-gray-700 text-sm">
             充值渠道: 
             <span className="font-semibold text-gray-900">Mvola 100~5000</span>
           </p>
           <p className="text-gray-600 text-xs mt-1">请输入100到5000之间的金额。</p>
-        </div>
+        </div> */}
 
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
@@ -79,7 +79,7 @@ export default function RechargePage() {
 
             >
               {
-                channels.map(c => (<option value={c}>{c}</option>))
+                channels.map(c => (<option key={c} value={c}>{c}</option>))
               }
             </select>
           </div>
