@@ -10,6 +10,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Generate version.txt
+      run: |
+        echo "commit: $(git rev-parse HEAD)" > version.txt
+        echo "branch: $(git rev-parse --abbrev-ref HEAD)" >> version.txt
+        echo "buildTime: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> version.txt
 
     - name: Setup SSH
       uses: webfactory/ssh-agent@v0.9.0
