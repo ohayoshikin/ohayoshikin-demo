@@ -51,7 +51,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ code: 500, msg: '处理本地订单更新失败' }, { status: 500 });
     }
 
-    return NextResponse.json({ code: 200, msg: 'OK' });
+    // return NextResponse.json({ code: 200, msg: 'OK' });
+    return new NextResponse('success')
   } catch (error: any) {
     console.error('Recharge callback API error:', error);
     return NextResponse.json({ code: 500, msg: error.message || '内部服务器错误' }, { status: 500 });
