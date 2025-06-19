@@ -47,7 +47,7 @@ jobs:
           cd ${{ secrets.SSH_TARGET_DIR }}
           docker stop ohayoshikin-demo || true
           docker rm ohayoshikin-demo || true
-          docker rm ohayoshikin-demo-img || true
+          docker rmi ohayoshikin-demo-img || true
           docker build -t ohayoshikin-demo-img .
           docker run -d \
             --name ohayoshikin-demo \
