@@ -50,6 +50,10 @@ jobs:
           docker rmi ohayoshikin-demo-img || true
           docker build -t ohayoshikin-demo-img .
           docker run -d \
+            --log-driver=json-file \
+            --log-opt max-size=3m \
+            --log-opt max-file=1 \
+            --restart=always \
             --name ohayoshikin-demo \
             --env-file .env.production \
             --network baota_net \
