@@ -1,3 +1,4 @@
+// src/types/common.d.ts
 interface PageParams {
   current: number
   pageSize: number

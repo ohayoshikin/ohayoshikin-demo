@@ -1,7 +1,7 @@
 name: Deploy to Remote Server via Docker
 
 on:
-  workflow_dispatch: # 手动触发部署
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -38,7 +38,6 @@ jobs:
           'PAYMENT_SIGN_KEY=${{ secrets.PAYMENT_SIGN_KEY }}' \
           'PAYMENT_API=${{ secrets.PAYMENT_API }}' \
           'PAYMENT_USERNAME=${{ secrets.PAYMENT_USERNAME }}' \
-          'NEXT_PUBLIC_PAYMENT_CHANNELS=${{ secrets.NEXT_PUBLIC_PAYMENT_CHANNELS }}' \
           > ${{ secrets.SSH_TARGET_DIR }}/.env.production"
 
     - name: Build and Restart Docker container

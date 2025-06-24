@@ -1,3 +1,4 @@
+// src/models/UserModel.ts
 import {
   prop,
   getModelForClass,

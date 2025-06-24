@@ -1,6 +1,7 @@
 // src/app/api/recharge/create-order/route.ts
 import { NextResponse } from 'next/server';
-import { rechargeAction } from '@/src/lib/actions'; // 导入 Server Action
+import { rechargeAction } from '@/src/lib/actions';
+import { callGatewayApi } from '@/src/lib/utils';
 
 function response (
   {
@@ -50,31 +51,44 @@ export async function POST(request: Request) {
     const channelCode = formData.get('channelCode')?.toString();
     const amount = amountStr ? parseInt(amountStr.toString(), 10) : NaN;
 
-    const PAYMENT_CHANNELS = process.env.NEXT_PUBLIC_PAYMENT_CHANNELS
-    const channels = (PAYMENT_CHANNELS || '').split(',')
-
-    if (!channelCode || !channels.includes(channelCode)) {
+    if (!channelCode) {
       return response({
         status: 400,
         title: '充值失败',
-        message: `通道${channelCode}无效, 请选择正确的通道`,
-      })
+        message: `请选择充值通道`,
+      });
     }
 
-    const range = channelCode.split('-')
+    // 调用网关接口获取最新通道配置
+    const channelResponse = await callGatewayApi<{ code: string, name: string, min: number, max: number }[]>('/deposit/channels', {});
+    if (channelResponse.code !== 200 || !channelResponse.data) {
+      return response({
+        status: 500,
+        title: '充值失败',
+        message: channelResponse.msg || '无法获取通道信息，请稍后重试。',
+      });
+    }
+
+    const matchedChannel = channelResponse.data.find(item => item.code === channelCode);
+
+    if (!matchedChannel) {
+      return response({
+        status: 400,
+        title: '充值失败',
+        message: `通道 ${channelCode} 无效，请重新选择`,
+      });
+    }
 
     if (
       isNaN(amount)
-      ||
-      amount < Number(range[1])
-      ||
-      amount > Number(range[2])
+      || amount < matchedChannel.min
+      || amount > matchedChannel.max
     ) {
       return response({
         status: 400,
         title: '充值失败',
-        message: `金额无效，请输入 ${range[1]} 到 ${range[2]} 之间的整数金额。`,
-      })
+        message: `金额无效，请输入 ${matchedChannel.min} 到 ${matchedChannel.max} 之间的整数金额。`,
+      });
     }
 
     const result = await rechargeAction(amount, channelCode);
@@ -86,8 +100,9 @@ export async function POST(request: Request) {
         status: 500,
         title: '充值失败',
         message: result.error || '提交充值失败，请返回重试。',
-      })
+      });
     }
+
   } catch (error: any) {
     console.error('Recharge API route error:', error);
 

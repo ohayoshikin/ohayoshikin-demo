@@ -26,8 +26,6 @@ export default function BalanceDisplay({ initialBalance }: BalanceDisplayProps) 
     setLoading(false);
   };
 
-  // handleRechargeClick 就不再需要了，因为我们会直接使用 Link 组件
-
   return (
     <div className="flex items-center space-x-4">
       <p className="text-xl font-medium text-gray-700">
