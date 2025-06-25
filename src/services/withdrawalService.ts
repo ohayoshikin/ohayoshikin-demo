@@ -69,7 +69,11 @@ export class WithdrawalService {
     };
 
     const resp: GatewayCreateWithdrawalResult = await callGatewayApi('/withdrawal/create', params);
-    if (!resp || resp.code !== 200) throw new Error(resp?.msg || '远程创建订单失败');
+    if (!resp || resp.code !== 200) {
+      order.state = 2
+      user.balance += amount
+      throw new Error(resp?.msg || '远程创建订单失败');
+    }
     return order;
   }
 
