@@ -34,8 +34,9 @@ export default function WithdrawalPage() {
       } else {
         setError(data.msg || '取款失败');
       }
-    } catch (err) {
+    } catch (e) {
       setError('网络错误');
+      console.log(e)
     }
     setLoading(false);
   };

@@ -60,6 +60,7 @@ export default function WithdrawalListPage() {
       );
     } catch (err) {
       setError('检查失败');
+      console.log(err)
     }
     setCheckingId(null);
   };

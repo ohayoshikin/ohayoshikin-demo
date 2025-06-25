@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { WithdrawalOrder, WithdrawalOrderModel, WithdrawalOrderState, WithdrawalOrderStateMap } from '../models/WithdrawalOrderModel';
+import { WithdrawalOrderModel, WithdrawalOrderState, WithdrawalOrderStateMap } from '../models/WithdrawalOrderModel';
 import { UserModel } from '../models/UserModel';
 import { callGatewayApi } from '../lib/utils';
 import { WithdrawalOrderListItem} from '../types/withdrawal';

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { refreshBalanceAction } from '@/src/lib/actions';
 
 export default function BalanceDisplay({ initialBalance }: { initialBalance?: number }) {
