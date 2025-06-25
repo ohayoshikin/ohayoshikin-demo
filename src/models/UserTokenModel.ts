@@ -51,7 +51,10 @@ export class UserToken {
   // public userDetail?: UserDocument; // 仅仅是 TypeScript 声明，Mongoose 不会存储
 }
 
-export const UserTokenModel = mongoose.models.UserToken ?? getModelForClass(UserToken);
+// export const UserTokenModel = mongoose.models.UserToken ?? getModelForClass(UserToken);
+export const UserTokenModel = mongoose.models.UserToken ?? getModelForClass(UserToken, {
+  options: { customName: 'UserToken' }
+})
 
 // === 虚拟字段定义 ===
 // UserTokenSchema 还没有导出，所以需要在 getModelForClass 之前定义

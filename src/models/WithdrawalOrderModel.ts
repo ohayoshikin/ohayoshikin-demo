@@ -63,4 +63,7 @@ export class WithdrawalOrder {
   public notifyInfo?: string;
 }
 
-export const WithdrawalOrderModel = mongoose.models.WithdrawalOrder ?? getModelForClass(WithdrawalOrder);
+// export const WithdrawalOrderModel = mongoose.models.WithdrawalOrder ?? getModelForClass(WithdrawalOrder);
+export const WithdrawalOrderModel = mongoose.models.WithdrawalOrder ?? getModelForClass(WithdrawalOrder, {
+  options: { customName: 'WithdrawalOrder' }
+})

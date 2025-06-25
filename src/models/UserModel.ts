@@ -29,4 +29,7 @@ export class User {
   public balance!: number
 }
 
-export const UserModel = mongoose.models.User ?? getModelForClass(User)
+// export const UserModel = mongoose.models.User ?? getModelForClass(User)
+export const UserModel = mongoose.models.User ?? getModelForClass(User, {
+  options: { customName: 'User' }
+})

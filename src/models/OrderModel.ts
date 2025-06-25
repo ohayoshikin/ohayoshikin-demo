@@ -52,4 +52,7 @@ export class Order {
   public notifyInfo?: string; // 用于记录回调或查询的通知信息
 }
 
-export const OrderModel = mongoose.models.Order ?? getModelForClass(Order);
+// export const OrderModel = mongoose.models.Order ?? getModelForClass(Order);
+export const OrderModel = mongoose.models.Order ?? getModelForClass(Order, {
+  options: { customName: 'Order' }
+})
