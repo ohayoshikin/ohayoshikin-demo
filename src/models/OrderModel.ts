@@ -42,17 +42,14 @@ export class Order {
   /**
    * 我方状态
    * * 0: 等待 (初始状态，或对应对方的 0, 1, 4, 5)
-   * * 1: 成功 (对应对方的 2)
-   * * 2: 失败 (对应对方的 3)
+   * * 1: 成功 (对应对方的 1)
+   * * 2: 失败 (对应对方的 2)
    */
   @prop({ default: OurOrderState.PENDING, required: true }) // 默认我方状态为等待 (0)
   public state!: number; // 使用我方状态枚举类型
 
   @prop()
   public notifyInfo?: string; // 用于记录回调或查询的通知信息
-
-  @prop({ default: false }) // 新增字段，标记是否已增加余额
-  public isBalanceAdded?: boolean;
 }
 
 export const OrderModel = mongoose.models.Order ?? getModelForClass(Order);

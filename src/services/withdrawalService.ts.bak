@@ -1,0 +1,134 @@
+import { Types } from 'mongoose';
+import { WithdrawalOrder, WithdrawalOrderModel, WithdrawalOrderState, WithdrawalOrderStateMap } from '../models/WithdrawalOrderModel';
+import { UserModel } from '../models/UserModel';
+import { callGatewayApi } from '../lib/utils';
+
+function getNotifyUrl(req: any) {
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  return `${protocol}://${host}/api/withdrawal/callback`;
+}
+
+async function getUserByToken(token: string) {
+  // 复用 userService 的 token 逻辑
+  const { UserTokenModel } = await import('../models/UserTokenModel');
+  const tokenDoc = await UserTokenModel.findOne({ token });
+  if (!tokenDoc) return null;
+  return UserModel.findById(tokenDoc.userId);
+}
+
+async function createWithdrawalOrder(userId: string, amount: number, type: string, targetAccount: string, targetOwner: string | undefined, req: any) {
+  const user = await UserModel.findById(userId);
+  if (!user) throw new Error('用户不存在');
+  if (user.balance < amount) throw new Error('余额不足');
+
+  // 远程余额校验
+  const channelBalanceResp = await callGatewayApi('/withdrawal/balance', {});
+  if (!channelBalanceResp?.data || channelBalanceResp.data.balance < amount)
+    throw new Error('通道余额不足，请先充值');
+
+  user.balance -= amount;
+  await user.save();
+
+  const order = await WithdrawalOrderModel.create({
+    userId,
+    amount,
+    type,
+    targetOwner,
+    targetAccount,
+    notifyUrl: getNotifyUrl(req),
+    time: Date.now(),
+    state: WithdrawalOrderState.PENDING,
+  });
+
+  const merchantSerial = order._id.toString();
+  const payload = {
+    amount,
+    type,
+    merchantSerial,
+    targetOwner,
+    targetAccount,
+    notifyUrl: getNotifyUrl(req),
+  };
+
+  const resp = await callGatewayApi('/withdrawal/create', payload);
+  if (!resp || resp.code !== 200) throw new Error(resp?.msg || '远程创建订单失败');
+  return order;
+}
+
+async function getUserWithdrawalOrders(userId: string, page: PageParams): Promise<PageResult<WithdrawalOrderListItem>> {
+  const cond = { userId: new Types.ObjectId(userId) };
+  const total = await WithdrawalOrderModel.countDocuments(cond);
+  const orders = await WithdrawalOrderModel.find(cond).sort({ time: -1 })
+    .skip((page.current - 1) * page.pageSize)
+    .limit(page.pageSize);
+
+  return {
+    success: true,
+    data: orders.map(o => ({
+      _id: o._id!.toString(),
+      amount: o.amount,
+      type: o.type,
+      targetAccount: o.targetAccount,
+      targetOwner: o.targetOwner,
+      time: new Date(o.time).toLocaleString(),
+      state: WithdrawalOrderStateMap[o.state as WithdrawalOrderState],
+      checkable: o.state === WithdrawalOrderState.PENDING,
+    })),
+    total,
+    current: page.current,
+    pageSize: page.pageSize,
+  };
+}
+
+async function checkAndUpdateWithdrawalOrder(orderId: string) {
+  const order = await WithdrawalOrderModel.findById(orderId);
+  if (!order) throw new Error('订单不存在');
+  if (order.state !== WithdrawalOrderState.PENDING) return order;
+
+  const resp = await callGatewayApi('/withdrawal/get', { merchantSerial: order._id.toString() });
+  if (resp?.code !== 200) throw new Error(resp?.msg || '远程查询失败');
+  const remoteState = (resp.data as any).state;
+
+  if (remoteState === 1) {
+    order.state = WithdrawalOrderState.SUCCESS;
+    await order.save();
+  } else if (remoteState === 2 || remoteState === 3) {
+    order.state = WithdrawalOrderState.FAILED;
+    const user = await UserModel.findById(order.userId);
+    if (user) {
+      user.balance += order.amount;
+      await user.save();
+    }
+    await order.save();
+  }
+  return order;
+}
+
+async function updateWithdrawalOrderFromCallback({
+  merchantSerial, state, ...rest
+}: { merchantSerial: string, state: number, [k: string]: any }) {
+  const order = await WithdrawalOrderModel.findById(merchantSerial);
+  if (!order) throw new Error('订单不存在');
+  if (order.state !== WithdrawalOrderState.PENDING) return;
+  if (state === 1) {
+    order.state = WithdrawalOrderState.SUCCESS;
+  } else if (state === 2 || state === 3) {
+    order.state = WithdrawalOrderState.FAILED;
+    const user = await UserModel.findById(order.userId);
+    if (user) {
+      user.balance += order.amount;
+      await user.save();
+    }
+  }
+  order.notifyInfo = JSON.stringify(rest);
+  await order.save();
+}
+
+export default {
+  getUserByToken,
+  createWithdrawalOrder,
+  getUserWithdrawalOrders,
+  checkAndUpdateWithdrawalOrder,
+  updateWithdrawalOrderFromCallback,
+};

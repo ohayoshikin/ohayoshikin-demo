@@ -1,15 +1,10 @@
-// src/app/components/BalanceDisplay.tsx
 'use client';
 
-import { refreshBalanceAction } from '@/src/lib/actions'
-import Link from 'next/link'
 import { useState } from 'react';
+import Link from 'next/link';
+import { refreshBalanceAction } from '@/src/lib/actions';
 
-interface BalanceDisplayProps {
-  initialBalance?: number;
-}
-
-export default function BalanceDisplay({ initialBalance }: BalanceDisplayProps) {
+export default function BalanceDisplay({ initialBalance }: { initialBalance?: number }) {
   const [balance, setBalance] = useState<number | undefined>(initialBalance);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,16 +31,20 @@ export default function BalanceDisplay({ initialBalance }: BalanceDisplayProps) 
         disabled={loading}
         className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-300 transition-colors duration-200"
       >
-        {loading ? '刷新中...' : '刷新余额'}
+        {loading ? '...' : '刷新'}
       </button>
-
-      {/* 将按钮替换为 Link 组件 */}
-      <Link
-        href="/recharge" // 指向充值页面的路径
-        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 inline-block" // 添加 inline-block 确保样式应用
+      {/* <Link
+        href="/recharge"
+        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 inline-block"
       >
         立即充值
       </Link>
+      <Link
+        href="/withdrawal"
+        className="px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition-colors duration-200 inline-block"
+      >
+        立即取款
+      </Link> */}
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
